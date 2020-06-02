@@ -1,0 +1,39 @@
+pool:
+  name: Azure Pipelines
+steps:
+- task: Docker@0
+  displayName: 'Build an image'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryConnection: DockerHubConnection
+    dockerFile: MvcApp/Dockerfile
+    imageName: 'thevestedleopard/thevestedleopard-docker-dev:v2.$(Build.BuildId)'
+
+- task: Docker@0
+  displayName: 'Push an image'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryConnection: DockerHubConnection
+    action: 'Push an image'
+    imageName: 'thevestedleopard/thevestedleopard-docker-dev:v2.$(Build.BuildId)'
+
+- task: qetza.replacetokens.replacetokens-task.replacetokens@3
+  displayName: 'Replace tokens in mvc-deployment.azure.yaml'
+  inputs:
+    rootDirectory: '/mvc-deployment.azure.yaml'
+    targetFiles: 'mvc-deployment.azure.yaml'
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: kubernetes
+    Contents: |
+     mssql-config-map.yaml
+     mssql-deployment.yaml
+     mssql-pv.azure.yaml
+     mssql-secret.yaml
+     mvc-deployment.azure.yaml
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'

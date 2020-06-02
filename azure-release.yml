@@ -1,0 +1,44 @@
+steps:
+- task: Kubernetes@0
+  displayName: 'kubectl apply mssql-config-map'
+  inputs:
+    kubernetesServiceConnection: Kubernetes
+    command: apply
+    useConfigurationFile: true
+    configuration: '$(System.DefaultWorkingDirectory)/_Product-Store-On-Kubernetes-CI-CD-Docker container-CI/drop/mssql-config-map.yaml'
+
+    steps:
+- task: Kubernetes@0
+  displayName: 'kubectl apply mssql-deployment'
+  inputs:
+    kubernetesServiceConnection: Kubernetes
+    command: apply
+    useConfigurationFile: true
+    configuration: '$(System.DefaultWorkingDirectory)/_Product-Store-On-Kubernetes-CI-CD-Docker container-CI/drop/mssql-deployment.yaml'
+
+    steps:
+- task: Kubernetes@0
+  displayName: 'kubectl apply mssql-pv'
+  inputs:
+    kubernetesServiceConnection: Kubernetes
+    command: apply
+    useConfigurationFile: true
+    configuration: '$(System.DefaultWorkingDirectory)/_Product-Store-On-Kubernetes-CI-CD-Docker container-CI/drop/mssql-pv.azure.yaml'
+
+    steps:
+- task: Kubernetes@0
+  displayName: 'kubectl apply mssql-secret'
+  inputs:
+    kubernetesServiceConnection: Kubernetes
+    command: apply
+    useConfigurationFile: true
+    configuration: '$(System.DefaultWorkingDirectory)/_Product-Store-On-Kubernetes-CI-CD-Docker container-CI/drop/mssql-secret.yaml'
+
+    steps:
+- task: Kubernetes@0
+  displayName: 'kubectl apply mvc-deployment'
+  inputs:
+    kubernetesServiceConnection: Kubernetes
+    command: apply
+    useConfigurationFile: true
+    configuration: '$(System.DefaultWorkingDirectory)/_Product-Store-On-Kubernetes-CI-CD-Docker container-CI/drop/mvc-deployment.azure.yaml'
